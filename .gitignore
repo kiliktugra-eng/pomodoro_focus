@@ -1,4 +1,5 @@
 node_modules/
 dist/
 *.exe
-!docs/*.zip
+!docs/*.zippomodoro-focus-*.zip
+pomodoro-focus-*.zip
