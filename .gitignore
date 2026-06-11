@@ -1,4 +1,4 @@
 node_modules/
 dist/
 *.exe
-*.zip
+!docs/*.zip
