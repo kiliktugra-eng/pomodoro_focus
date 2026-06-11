@@ -6,8 +6,6 @@ let tray = null;
 let powerBlockerId = null;
 let isStudyMode = false;
 
-const PASSWORD = 'Tugra10.10';
-
 function createTrayIcon() {
   const size = 16;
   const buf = Buffer.alloc(size * size * 4);
@@ -76,11 +74,6 @@ ipcMain.on('set-mode', (event, mode) => {
   isStudyMode = (mode === 'study');
   if (isStudyMode) { mainWindow?.show(); mainWindow?.setFullScreen(true); }
   else mainWindow?.setFullScreen(false);
-});
-
-ipcMain.on('verify-password', (event, password) => {
-  if (password === PASSWORD) { isStudyMode = false; event.reply('password-result', true); }
-  else event.reply('password-result', false);
 });
 
 ipcMain.on('allow-close', () => {

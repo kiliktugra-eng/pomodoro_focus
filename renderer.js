@@ -212,7 +212,11 @@ function renderWeekChart() {
   week.forEach(d => {
     const pct = (d.totalSeconds / maxSec) * 100;
     const col = document.createElement('div'); col.className = 'chart-col';
-    col.innerHTML = '<span class="chart-val">' + Math.round(d.totalSeconds / 60) + '</span><div class="chart-bar-wrap"><div class="chart-bar' + (d.isToday ? ' today' : '') + '" style="height:' + Math.max(pct, 1) + '%"></div></div><span class="chart-label">' + d.dayName + '</span>';
+    col.innerHTML = `
+      <span class="chart-val">${Math.round(d.totalSeconds / 60)}</span>
+      <div class="chart-bar-wrap"><div class="chart-bar${d.isToday ? ' today' : ''}" style="height:${Math.max(pct, 1)}%"></div></div>
+      <span class="chart-label">${d.dayName}</span>
+    `;
     els.weekChart.appendChild(col);
   });
 }
@@ -227,6 +231,7 @@ function showStats() {
   const monthCount = month.reduce((a, s) => a + s.count, 0);
   const daysInMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
   const avgDaily = daysInMonth > 0 ? Math.round(monthTotalSec / 60 / daysInMonth) : 0;
+
   els.stTodayMin.textContent = Math.round(today.totalSeconds / 60);
   els.stTodaySession.textContent = today.count;
   els.stStreak.textContent = streak;
@@ -242,19 +247,19 @@ function updateUI() {
   if (mode === 'study') {
     els.statusBadge.className = 'study';
     els.statusIcon.textContent = '\u{1F4D6}'; els.statusText.textContent = 'Ders';
-    els.sessionLabel.textContent = 'Ders Süresi'; els.sessionCount.textContent = cs + '. Oturum / ' + ts;
+    els.sessionLabel.textContent = 'Ders Süresi'; els.sessionCount.textContent = `${cs}. Oturum / ${ts}`;
     els.timerDisplay.className = 'study-time';
     els.btnPrimary.textContent = state.isRunning ? 'Durdur' : 'Devam'; els.btnPrimary.className = 'btn-main running';
   } else if (mode === 'break') {
     els.statusBadge.className = 'break';
     els.statusIcon.textContent = '\u{1F334}'; els.statusText.textContent = 'Mola';
-    els.sessionLabel.textContent = 'Mola Süresi'; els.sessionCount.textContent = cs + '. Oturum aras\u0131';
+    els.sessionLabel.textContent = 'Mola Süresi'; els.sessionCount.textContent = `${cs}. Oturum aras\u0131`;
     els.timerDisplay.className = 'break-time';
     els.btnPrimary.textContent = state.isRunning ? 'Durdur' : 'Devam'; els.btnPrimary.className = 'btn-main break-mode';
   } else {
     els.statusBadge.className = '';
     els.statusIcon.textContent = '\u26B9'; els.statusText.textContent = 'Haz\u0131r';
-    els.sessionLabel.textContent = 'Ders S\u00FCresi'; els.sessionCount.textContent = cs + '. Oturum / ' + ts;
+    els.sessionLabel.textContent = 'Ders S\u00FCresi'; els.sessionCount.textContent = `${cs}. Oturum / ${ts}`;
     els.timerDisplay.className = ''; els.btnPrimary.textContent = 'Ba\u015Flat'; els.btnPrimary.className = 'btn-main';
   }
   els.btnSecondary.disabled = !state.isRunning && state.mode === 'idle';
@@ -312,7 +317,7 @@ function handleTimerEnd() {
   } else if (state.mode === 'break') {
     if (state.currentSession < state.totalSessions) {
       state.currentSession++;
-      window.electronAPI.showNotification('Mola Bitti!', state.currentSession + '. oturum başlıyor!');
+      window.electronAPI.showNotification('Mola Bitti!', `${state.currentSession}. oturum başlıyor!`);
       state.mode = 'study'; state.totalTime = state.studyMinutes * 60; state.timeRemaining = state.totalTime;
       window.electronAPI.setMode('study'); window.electronAPI.focusWindow();
       if (state.soundType !== 'none') SoundEngine.play(state.soundType);
@@ -367,13 +372,13 @@ function showPassword() {
 function loadSettings() {
   const user = UserManager.current(); if (!user) return;
   try {
-    const s = JSON.parse(localStorage.getItem('pomodoro_settings_' + user) || '{}');
+    const s = JSON.parse(localStorage.getItem(`pomodoro_settings_${user}`) || '{}');
     if (s.studyMinutes) { state.studyMinutes = s.studyMinutes; els.studyDuration.textContent = s.studyMinutes; }
     if (s.breakMinutes) { state.breakMinutes = s.breakMinutes; els.breakDuration.textContent = s.breakMinutes; }
     if (s.totalSessions) { state.totalSessions = s.totalSessions; els.sessionCountSetting.textContent = s.totalSessions; }
     if (s.soundType) setSound(s.soundType);
     if (s.volume !== undefined) { els.volumeSlider.value = s.volume; SoundEngine.setVolume(s.volume / 100); els.volPct.textContent = s.volume + '%'; }
-    if (s.bgImage) els.bgLayer.style.backgroundImage = 'url(' + s.bgImage + ')';
+    if (s.bgImage) els.bgLayer.style.backgroundImage = `url(${s.bgImage})`;
   } catch (e) {}
   state.totalTime = state.studyMinutes * 60; state.timeRemaining = state.totalTime;
   updateDisplay(); updateUI(); updateStatsDisplay();
@@ -381,7 +386,7 @@ function loadSettings() {
 
 function saveSettings() {
   const user = UserManager.current(); if (!user) return;
-  localStorage.setItem('pomodoro_settings_' + user, JSON.stringify({
+  localStorage.setItem(`pomodoro_settings_${user}`, JSON.stringify({
     studyMinutes: state.studyMinutes, breakMinutes: state.breakMinutes,
     totalSessions: state.totalSessions, soundType: state.soundType,
     volume: parseInt(els.volumeSlider.value),
@@ -393,7 +398,7 @@ function showApp() {
   els.loginOverlay.style.display = 'none';
   const user = UserManager.current();
   els.userBtnName.textContent = user;
-  els.titlebarText.textContent = 'Pomodoro Focus - ' + user;
+  els.titlebarText.textContent = `Pomodoro Focus - ${user}`;
   loadSettings();
 }
 
@@ -437,7 +442,7 @@ els.adjBtns.forEach(b => b.addEventListener('click', () => {
 }));
 
 els.bgImageBtn.addEventListener('click', async () => {
-  if (window.electronAPI) { const fp = await window.electronAPI.selectImage(); if (fp) { els.bgLayer.style.backgroundImage = 'url(file:///' + fp.replace(/\\/g, '/') + ')'; saveSettings(); } }
+  if (window.electronAPI) { const fp = await window.electronAPI.selectImage(); if (fp) { els.bgLayer.style.backgroundImage = `url(file:///${fp.replace(/\\/g, '/')})`; saveSettings(); } }
 });
 els.bgRemoveBtn.addEventListener('click', () => { els.bgLayer.style.backgroundImage = ''; saveSettings(); });
 
@@ -451,12 +456,28 @@ els.settingsLogout.addEventListener('click', () => {
   location.reload();
 });
 
+els.settingsChangepass = $('settings-changepass');
+els.settingsPassword = $('settings-password');
+els.settingsChangepass.addEventListener('click', () => {
+  const newPass = els.settingsPassword.value.trim();
+  if (!newPass || newPass.length < 3) return;
+  const user = UserManager.current(); if (!user) return;
+  const d = UserManager.get();
+  d.users[user].password = newPass;
+  UserManager.save(d);
+  els.settingsPassword.value = '';
+  els.settingsPassword.placeholder = 'Parola değiştirildi!';
+  setTimeout(() => { els.settingsPassword.placeholder = 'Yeni parola'; }, 2000);
+});
+
+// Login handlers
 els.loginBtn.addEventListener('click', () => {
   const user = els.loginUsername.value.trim();
   const pass = els.loginPassword.value.trim();
   if (!user || !pass) return;
   els.loginError.classList.add('hidden');
   els.registerError.classList.add('hidden');
+
   if (UserManager.exists()) {
     if (UserManager.login(user, pass)) { showApp(); }
     else { els.loginError.classList.remove('hidden'); }
@@ -479,16 +500,22 @@ els.registerBtn.addEventListener('click', () => {
 els.loginUsername.addEventListener('keydown', (e) => { if (e.key === 'Enter') els.loginPassword.focus(); });
 els.loginPassword.addEventListener('keydown', (e) => { if (e.key === 'Enter') els.loginBtn.click(); });
 
+function getUserPassword() {
+  const user = UserManager.current(); if (!user) return '';
+  const d = UserManager.get();
+  return d.users[user]?.password || '';
+}
+
 window.electronAPI.onCloseRequested(() => {
   if (state.mode === 'study') showPassword(); else window.electronAPI.allowClose();
 });
 
-window.electronAPI.onPasswordResult((r) => {
-  if (r) { els.passwordOverlay.classList.add('hidden'); window.electronAPI.allowClose(); }
+els.passwordSubmit.addEventListener('click', () => {
+  const p = els.passwordInput.value.trim();
+  if (!p) return;
+  if (p === getUserPassword()) { els.passwordOverlay.classList.add('hidden'); window.electronAPI.allowClose(); }
   else { els.passwordError.classList.remove('hidden'); els.passwordInput.value = ''; els.passwordInput.focus(); }
 });
-
-els.passwordSubmit.addEventListener('click', () => { const p = els.passwordInput.value.trim(); if (p) window.electronAPI.verifyPassword(p); });
 els.passwordCancel.addEventListener('click', () => { els.passwordOverlay.classList.add('hidden'); els.passwordError.classList.add('hidden'); });
 els.passwordInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') els.passwordSubmit.click(); else if (e.key === 'Escape') els.passwordCancel.click(); });
 
@@ -499,4 +526,5 @@ document.addEventListener('keydown', (e) => {
   if (e.key === ' ' && !state.isRunning && state.mode === 'idle') { e.preventDefault(); toggleTimer(); }
 });
 
+// Start
 initLogin();
