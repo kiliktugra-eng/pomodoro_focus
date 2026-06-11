@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pomodoro Focus</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="titlebar">
+  <div id="titlebar-drag">
+    <span id="titlebar-icon">&#9201;</span>
+    <span id="titlebar-text">Pomodoro Focus</span>
+  </div>
+  <div id="titlebar-controls">
+    <button class="tb-btn" id="tb-minimize" title="Küçült">&#9472;</button>
+    <button class="tb-btn" id="tb-close" title="Kapat">&#10005;</button>
+  </div>
+</div>
+
+<div id="bg-gradient"></div>
+<div id="bg-layer"></div>
+<div id="bg-overlay"></div>
+
+<canvas id="confetti-canvas"></canvas>
+
+<div id="app-container">
+
+  <div id="main-card">
+    <div id="status-badge">
+      <span id="status-icon">&#9898;</span>
+      <span id="status-text">Hazır</span>
+    </div>
+
+    <div id="timer-wrapper">
+      <div id="timer-display">
+        <span id="timer-minutes">25</span>
+        <span class="timer-sep">:</span>
+        <span id="timer-seconds">00</span>
+      </div>
+    </div>
+
+    <div id="session-info">
+      <span id="session-label">Ders Süresi</span>
+      <span class="sess-dot">&#183;</span>
+      <span id="session-count">1. Oturum</span>
+    </div>
+    <div id="stats-row">
+      &#128202; Bugün: <span id="stats-count">0</span> oturum
+    </div>
+
+    <div id="controls">
+      <button id="btn-primary" class="btn-main">Başlat</button>
+      <button id="btn-secondary" class="btn-secondary" disabled>Sıfırla</button>
+      <button id="btn-exit" class="btn-exit">Çıkış</button>
+    </div>
+
+    <div id="sound-section">
+      <div id="sound-header">
+        <span id="sound-label">Ortam Sesi</span>
+        <div id="sound-viz">
+          <span class="viz-bar"></span>
+          <span class="viz-bar"></span>
+          <span class="viz-bar"></span>
+          <span class="viz-bar"></span>
+        </div>
+      </div>
+      <div id="sound-scroll">
+        <button class="sound-btn active" data-sound="none">Yok</button>
+        <button class="sound-btn" data-sound="rain">&#127783; Yağmur</button>
+        <button class="sound-btn" data-sound="ocean">&#127754; Okyanus</button>
+        <button class="sound-btn" data-sound="forest">&#127795; Orman</button>
+        <button class="sound-btn" data-sound="wind">&#127788; Rüzgar</button>
+        <button class="sound-btn" data-sound="fire">&#128293; Ateş</button>
+        <button class="sound-btn" data-sound="crickets">&#128027; Cırcır</button>
+        <button class="sound-btn" data-sound="stream">&#127748; Dere</button>
+      </div>
+      <div id="volume-control">
+        <span id="vol-icon">&#128266;</span>
+        <input type="range" id="volume-slider" min="0" max="100" value="40">
+        <span id="vol-pct">40%</span>
+      </div>
+    </div>
+
+    <div id="bottom-row">
+      <button id="btn-stats" class="btn-bottom">&#128202; İstatistik</button>
+      <button id="btn-user" class="btn-bottom">&#128100; <span id="user-btn-name">Hesap</span></button>
+    </div>
+  </div>
+
+  <button id="settings-toggle" title="Ayarlar">&#9881;</button>
+
+  <div id="settings-panel">
+    <h2>Ayarlar</h2>
+    <div class="setting-group">
+      <label>Ders Süresi (dk)</label>
+      <div class="setting-control">
+        <button class="adj-btn" data-target="study" data-dir="-1">&#8722;</button>
+        <span id="study-duration">25</span>
+        <button class="adj-btn" data-target="study" data-dir="1">+</button>
+      </div>
+    </div>
+    <div class="setting-group">
+      <label>Mola Süresi (dk)</label>
+      <div class="setting-control">
+        <button class="adj-btn" data-target="break" data-dir="-1">&#8722;</button>
+        <span id="break-duration">5</span>
+        <button class="adj-btn" data-target="break" data-dir="1">+</button>
+      </div>
+    </div>
+    <div class="setting-group">
+      <label>Oturum Sayısı</label>
+      <div class="setting-control">
+        <button class="adj-btn" data-target="sessions" data-dir="-1">&#8722;</button>
+        <span id="session-count-setting">4</span>
+        <button class="adj-btn" data-target="sessions" data-dir="1">+</button>
+      </div>
+    </div>
+    <div class="setting-group">
+      <label>Arkaplan Resmi</label>
+      <button id="bg-image-btn" class="btn-setting">Resim Seç</button>
+      <button id="bg-remove-btn" class="btn-setting secondary">Kaldır</button>
+    </div>
+    <div class="setting-group" style="border-top:1px solid rgba(255,255,255,0.05);padding-top:16px;margin-top:16px;">
+      <label>Hesap</label>
+      <button id="settings-logout" class="btn-setting secondary">&#128682; Çıkış Yap</button>
+    </div>
+  </div>
+
+  <div id="login-overlay">
+    <div id="login-modal">
+      <div id="login-icon">&#127919;</div>
+      <h2>Pomodoro Focus</h2>
+      <p id="login-subtitle">Hesabına giriş yap</p>
+      <input type="text" id="login-username" placeholder="Kullanıcı Adı" autocomplete="off">
+      <input type="password" id="login-password" placeholder="Parola">
+      <p id="login-error" class="hidden">Hatalı kullanıcı adı veya parola</p>
+      <p id="register-error" class="hidden">Bu kullanıcı adı zaten var</p>
+      <button id="login-btn" class="login-main-btn">Giriş Yap</button>
+      <button id="register-btn" class="login-sec-btn">Hesap Oluştur</button>
+    </div>
+  </div>
+
+  <div id="stats-overlay" class="hidden">
+    <div id="stats-panel">
+      <div id="stats-header">
+        <h2>&#128202; İstatistikler</h2>
+        <button id="stats-close" class="tb-btn" style="width:32px;height:32px;border-radius:8px;">&#10005;</button>
+      </div>
+      <div id="stats-today">
+        <div class="stat-box">
+          <span class="stat-value" id="st-today-min">0</span>
+          <span class="stat-label">Bugün (dk)</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-value" id="st-today-session">0</span>
+          <span class="stat-label">Oturum</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-value" id="st-streak">0</span>
+          <span class="stat-label">Seri (gün)</span>
+        </div>
+      </div>
+      <div id="stats-week-section">
+        <div class="section-title">Son 7 Gün (dk)</div>
+        <div id="week-chart"></div>
+      </div>
+      <div id="stats-monthly">
+        <div class="section-title">Bu Ay</div>
+        <div id="monthly-grid">
+          <div class="stat-box small">
+            <span class="stat-value" id="st-month-min">0</span>
+            <span class="stat-label">Toplam dk</span>
+          </div>
+          <div class="stat-box small">
+            <span class="stat-value" id="st-month-session">0</span>
+            <span class="stat-label">Oturum</span>
+          </div>
+          <div class="stat-box small">
+            <span class="stat-value" id="st-avg">0</span>
+            <span class="stat-label">Ort. dk/gün</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="password-overlay" class="hidden">
+    <div id="password-modal">
+      <div id="password-icon">&#128274;</div>
+      <h3>Uygulamadan Çıkış</h3>
+      <p>Ders modundasınız. Çıkmak için parola girin.</p>
+      <input type="password" id="password-input" placeholder="Parola" autocomplete="off">
+      <p id="password-error" class="hidden">Yanlış parola! Tekrar deneyin.</p>
+      <div id="password-buttons">
+        <button id="password-submit">Onayla</button>
+        <button id="password-cancel">İptal</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="renderer.js"></script>
+</body>
+</html>
