@@ -1,44 +1,7 @@
-  GNU nano 7.2                             .github/workflows/build.yml *                                     
 name: Build
 on:
   push:
-    tags:
-      - 'v*'
-jobs:
-  build:
-    runs-on: windows-latest
-    steps:
-
-^G Help        ^O Write Out   ^W Where Is    ^K Cut         ^T Execute     ^C Location    M-U Undo
-^X Exit        ^R Read File   ^\ Replace     ^U Paste       ^J Justify     ^/ Go To Line  M-E Redo  GNU nano 7.2                             .github/workflows/build.yml *                                     
-name: Build
-on:
-  push:
-    tags:
-      - 'v*'
-jobs:
-  build:
-    runs-on: windows-latest
-    steps:
-
-^G Help        ^O Write Out   ^W Where Is    ^K Cut         ^T Execute     ^C Location    M-U Undo
-^X Exit        ^R Read File   ^\ Replace     ^U Paste       ^J Justify     ^/ Go To Line  M-E Redo  GNU nano 7.2                             .github/workflows/build.yml *                                     
-name: Build
-on:
-  push:
-    tags:
-      - 'v*'
-jobs:
-  build:
-    runs-on: windows-latest
-    steps:
-
-^G Help        ^O Write Out   ^W Where Is    ^K Cut         ^T Execute     ^C Location    M-U Undo
-^X Exit        ^R Read File   ^\ Replace     ^U Paste       ^J Justify     ^/ Go To Line  M-E Redoname: Build
-on:
-  push:
-    tags:
-      - 'v*'
+    tags: ['v*']
 jobs:
   build:
     runs-on: windows-latest
