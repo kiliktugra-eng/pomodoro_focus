@@ -1,0 +1,56 @@
+  GNU nano 7.2                             .github/workflows/build.yml *                                     
+name: Build
+on:
+  push:
+    tags:
+      - 'v*'
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+
+^G Help        ^O Write Out   ^W Where Is    ^K Cut         ^T Execute     ^C Location    M-U Undo
+^X Exit        ^R Read File   ^\ Replace     ^U Paste       ^J Justify     ^/ Go To Line  M-E Redo  GNU nano 7.2                             .github/workflows/build.yml *                                     
+name: Build
+on:
+  push:
+    tags:
+      - 'v*'
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+
+^G Help        ^O Write Out   ^W Where Is    ^K Cut         ^T Execute     ^C Location    M-U Undo
+^X Exit        ^R Read File   ^\ Replace     ^U Paste       ^J Justify     ^/ Go To Line  M-E Redo  GNU nano 7.2                             .github/workflows/build.yml *                                     
+name: Build
+on:
+  push:
+    tags:
+      - 'v*'
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+
+^G Help        ^O Write Out   ^W Where Is    ^K Cut         ^T Execute     ^C Location    M-U Undo
+^X Exit        ^R Read File   ^\ Replace     ^U Paste       ^J Justify     ^/ Go To Line  M-E Redoname: Build
+on:
+  push:
+    tags:
+      - 'v*'
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install
+      - run: npm run build
+      - run: Compress-Archive -Path "dist/Pomodoro Focus-win32-x64/*" -DestinationPath "pomodoro-focus-1.0.0.zip" -Force
+      - uses: softprops/action-gh-release@v1
+        with:
+          files: pomodoro-focus-1.0.0.zip
+
