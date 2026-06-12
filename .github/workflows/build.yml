@@ -1,7 +1,8 @@
 name: Build
 on:
   push:
-    tags: ['v*']
+    tags:
+      - "v*"
 jobs:
   build:
     runs-on: windows-latest
@@ -16,4 +17,3 @@ jobs:
       - uses: softprops/action-gh-release@v1
         with:
           files: pomodoro-focus-1.0.0.zip
-
